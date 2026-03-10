@@ -1,0 +1,8 @@
+{
+  "properties": {
+    "scope": "/subscriptions/28742713-55c3-4ad5-be9f-26540262491d/resourceGroups/APIM_Ops/providers/Microsoft.ApiManagement/service/apimops/products/starter",
+    "allowTracing": false,
+    "ownerId": "/subscriptions/28742713-55c3-4ad5-be9f-26540262491d/resourceGroups/APIM_Ops/providers/Microsoft.ApiManagement/service/apimops/users/1",
+    "state": "active"
+  }
+}

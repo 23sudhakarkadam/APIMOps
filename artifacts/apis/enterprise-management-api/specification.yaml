@@ -1,0 +1,293 @@
+openapi: 3.0.1
+info:
+  title: Enterprise Management API
+  version: '1.0'
+servers:
+  - url: https://apimops.azure-api.net
+paths:
+  /users:
+    get:
+      summary: Get all users
+      description: Get all users
+      operationId: get-users
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+              example:
+                - id: string
+                  name: string
+                  email: string
+    post:
+      summary: Create user
+      description: Create user
+      operationId: post-users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            example:
+              id: string
+              name: string
+              email: string
+      responses:
+        '201':
+          description: User created
+  '/users/{id}':
+    get:
+      summary: Get user by ID
+      description: Get user by ID
+      operationId: get-users-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: string
+                name: string
+                email: string
+    patch:
+      summary: Update user
+      description: Update user
+      operationId: patch-users-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            example:
+              id: string
+              name: string
+              email: string
+      responses:
+        '200':
+          description: Updated successfully
+    delete:
+      summary: Delete user
+      description: Delete user
+      operationId: delete-users-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted successfully
+  /products:
+    get:
+      summary: Get products
+      description: Get products
+      operationId: get-products
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create product
+      description: Create product
+      operationId: post-products
+      responses:
+        '201':
+          description: Created
+  '/products/{id}':
+    get:
+      summary: Get product
+      description: Get product
+      operationId: get-products-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    put:
+      summary: Replace product
+      description: Replace product
+      operationId: put-products-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated
+  /orders:
+    get:
+      summary: List orders
+      description: List orders
+      operationId: get-orders
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create order
+      description: Create order
+      operationId: post-orders
+      responses:
+        '201':
+          description: Created
+  '/orders/{id}':
+    get:
+      summary: Get order
+      description: Get order
+      operationId: get-orders-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: Update order
+      description: Update order
+      operationId: patch-orders-id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Updated
+  /inventory:
+    get:
+      summary: Get inventory
+      description: Get inventory
+      operationId: get-inventory
+      responses:
+        '200':
+          description: OK
+    patch:
+      summary: Update inventory
+      description: Update inventory
+      operationId: patch-inventory
+      responses:
+        '200':
+          description: Updated
+  /payments:
+    post:
+      summary: Process payment
+      description: Process payment
+      operationId: post-payments
+      responses:
+        '200':
+          description: Payment processed
+  /auth/token:
+    post:
+      summary: Generate token
+      description: Generate token
+      operationId: post-auth-token
+      responses:
+        '200':
+          description: Token generated
+  /reports/sales:
+    get:
+      summary: Sales report
+      description: Sales report
+      operationId: get-reports-sales
+      responses:
+        '200':
+          description: OK
+  /audit/logs:
+    get:
+      summary: Get audit logs
+      description: Get audit logs
+      operationId: get-audit-logs
+      responses:
+        '200':
+          description: OK
+  /notifications:
+    post:
+      summary: Send notification
+      description: Send notification
+      operationId: post-notifications
+      responses:
+        '202':
+          description: Accepted
+  /health:
+    get:
+      summary: Health check
+      description: Health check
+      operationId: get-health
+      responses:
+        '200':
+          description: Service healthy
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        totalAmount:
+          type: number
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]

@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "displayName": "Named",
+    "secret": false,
+    "tags": [
+      "Env",
+      "PROD"
+    ],
+    "value": "PROD"
+  }
+}
