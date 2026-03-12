@@ -1,0 +1,25 @@
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+crash.log
+crash.*.log
+*.backup
+CLAUDE.md
+*.ps1
+# aztfexport
+aztfexport.exe
+aztfexportResourceMapping.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+/Export
