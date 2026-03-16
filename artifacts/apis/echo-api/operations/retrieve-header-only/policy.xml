@@ -7,7 +7,7 @@
 	</backend>
 	<outbound>
 		<base />
-		<set-header name="X-My-Sample" exists-action="override">
+		<set-header name="change-from-code" exists-action="override">
 			<value>This is a sample</value>
 			<!-- for multiple headers with the same name add additional value elements -->
 		</set-header>
