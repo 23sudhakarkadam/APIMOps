@@ -11,6 +11,21 @@ module "apim_core" {
   # named_value       = var.named_value  # Managed by ApiOps (named values/)
 }
 
+
+module "apim_core_prod" {
+  source = "./modules/apim_core"
+
+  location            = var.location
+  resource_group_name = "APIM_Ops_Prod"
+  apim_name           = "apiops-prod"
+  publisher_email     = var.publisher_email
+  publisher_name      = var.publisher_name
+  sku_name            = var.sku_name
+  admin_email         = var.admin_email
+  # named_value       = var.named_value  # Managed by ApiOps (named values/)
+}
+
+
 # Managed by ApiOps (artifacts/apis/)
 # module "apim_apis" {
 #   source = "./modules/apim_apis"
