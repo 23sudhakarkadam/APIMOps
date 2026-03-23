@@ -1,3 +1,4 @@
+# Define runtime inputs — override defaults when targeting a different APIM instance, branch, or output format.
 parameters:
   - name: APIM_INSTANCE_NAME
     displayName: APIM instance name
@@ -36,13 +37,16 @@ parameters:
       - OpenAPIV2Json
     default: OpenAPIV3Yaml
 
+# Run manually only — do not trigger automatically to avoid unintended overwrites of Git artifacts.
 trigger: none
 
+# Pulls secrets and APIM connection details from the shared variable group.
 variables:
   - group: apim-automation
   - name: System.Debug
     value: true
 
+# Two stages: extract artifacts from APIM portal, then raise a PR to merge them into Git.
 stages:
   - stage: create_artifact_from_portal
     displayName: Create artifact from portal
@@ -52,6 +56,7 @@ stages:
         pool:
           vmImage: ubuntu-latest
         steps:
+          # Authenticates with Azure and sets bearer token + service principal credentials as pipeline variables.
           - task: AzureCLI@2
             displayName: Set extraction variables
             inputs:
@@ -68,14 +73,14 @@ stages:
                 Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_ID]$env:servicePrincipalId"
                 Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_CLIENT_SECRET]$env:servicePrincipalKey"
                 Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_TENANT_ID]$env:tenantId"
-                
+
                 if (-not $env:AZURE_SUBSCRIPTION_ID) {
                     $subscriptionCount = az account list --query "length([])" --output tsv
                     if ($subscriptionCount -eq 1) {
                         $subscriptionId = az account list --query "[0].id" --output tsv
                         Write-Host "Setting AZURE_SUBSCRIPTION_ID environment variable to: $subscriptionId"
                         Write-Host "##vso[task.setvariable issecret=true;variable=AZURE_SUBSCRIPTION_ID]$($subscriptionId)"
-                    } 
+                    }
                     elseif ($subscriptionCount -gt 1) {
                         Write-Host "Multiple subscriptions are accessible. Please set the AZURE_SUBSCRIPTION_ID environment variable manually."
                         exit 1
@@ -87,6 +92,7 @@ stages:
 
               addSpnToEnvironment: true
               failOnStandardError: true
+          # Downloads the apiops extractor binary from GitHub releases; version is controlled by apiops_release_version variable.
           - task: PowerShell@2
             displayName: Fetch extractor
             inputs:
@@ -133,6 +139,7 @@ stages:
                 Write-Information "Execution complete."
               failOnStderr: true
               pwsh: true
+          # Calls the extractor binary to pull all API configurations from the APIM portal into the staging directory.
           - task: PowerShell@2
             displayName: Run extractor
             inputs:
@@ -143,7 +150,7 @@ stages:
                 $VerbosePreference = "Continue"
                 $InformationPreference = "Continue"
 
-                & "$(EXTRACTOR_FILE_PATH)"                
+                & "$(EXTRACTOR_FILE_PATH)"
                 if ($LASTEXITCODE -ne 0) { throw "Running extractor failed."}
 
                 Write-Information "Execution complete."
@@ -162,21 +169,25 @@ stages:
               ${{ if ne( parameters['CONFIGURATION_YAML_PATH'], 'Extract All' ) }}:
                 CONFIGURATION_YAML_PATH: ${{ parameters.CONFIGURATION_YAML_PATH }}
           #Running Super Linting Tool on the API(s) - START
+          # Installs Node.js required by the Spectral linter.
           - task: NodeTool@0
             inputs:
               versionSpec: '20.x'
             displayName: 'Install Node.js'
 
+          # Installs Spectral CLI globally for OpenAPI spec linting.
           - script: |
               npm install -g @stoplight/spectral-cli
             displayName: 'Install Spectral'
 
+          # Lints all extracted OpenAPI specs against the connectedcircuits ruleset; results are saved as JUnit XML.
           - script: |
               spectral lint --format stylish --format junit --output.junit $(Build.ArtifactStagingDirectory)/spectral-result.xml $(Build.ArtifactStagingDirectory)/${{ parameters.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}/apis/**/specification.{json,yaml,yml} -r https://raw.githubusercontent.com/connectedcircuits/devops-api-linter/main/rules.yaml
             displayName: 'Run Spectral Linting'
             continueOnError: true
             failOnStderr: true
-          
+
+          # Publishes linting results to the pipeline Tests tab for review.
           - task: PublishTestResults@2
             inputs:
               testResultsFormat: 'JUnit'
@@ -185,6 +196,8 @@ stages:
               testRunTitle: 'Linting results for API $(Build.SourceBranchName)'
               failTaskOnFailedTests: false
           #Running Super Linting Tool on the API(s) - END
+
+          # Saves extracted artifacts as a pipeline artifact so the next stage can download and commit them.
           - task: PublishPipelineArtifact@1
             displayName: Publish pipeline artifact
             inputs:
@@ -192,6 +205,7 @@ stages:
               artifactType: pipeline
               artifactName: artifacts-from-portal
 
+          # Generates a directory tree summary of extracted APIs and uploads it to the pipeline Summary tab.
           - task: Bash@3
             displayName: 'Pipeline Summary Tab Upload'
             inputs:
@@ -200,9 +214,9 @@ stages:
                 outputFilePath="$(Build.ArtifactStagingDirectory)/run-extractor.md"
                 apiDirectoryPath="$(Build.ArtifactStagingDirectory)/artifacts"
                 cd "$apiDirectoryPath" # exclude top directory
-                
+
                 echo "# Azure APIM Modifications Summary" > "$outputFilePath"
-                echo "" >> "outputFilePath" #newline                
+                echo "" >> "outputFilePath" #newline
                 echo '```' >> "$outputFilePath"
                 tree -d --noreport -I "outputFilePath" | sed 's/^/    /' >> "$outputFilePath"
                 echo '```' >> "$outputFilePath"
@@ -212,7 +226,8 @@ stages:
 
                 # Display the Markdown file in the pipeline summary
                 echo "##vso[task.uploadsummary]$outputFilePath"
-          
+
+  # Downloads the extracted artifacts and opens a PR against the target branch for team review before merging to Git.
   - stage: create_template_branch
     displayName: Create template branch
     jobs:
@@ -221,12 +236,14 @@ stages:
         pool:
           vmImage: ubuntu-latest
         steps:
+          # Retrieves the artifacts produced by the previous stage.
           - task: DownloadPipelineArtifact@2
             displayName: Download pipeline artifact
             inputs:
               source: current
               artifactName: artifacts-from-portal
               targetPath: $(Pipeline.Workspace)/artifacts-from-portal
+          # Clones the repo, syncs extracted artifacts into a temporary branch, and raises a PR for review.
           - task: PowerShell@2
             displayName: Create pull request
             inputs:
@@ -282,7 +299,7 @@ stages:
                     Write-Information "No changes exist to be published."
                     return
                 }
-                
+
                 Write-Information "Setting git user information..."
                 git config --global user.email "azuredevopsagent@azuredevops.com"
                 git config --global user.name "Azure Devops agent"
@@ -293,12 +310,12 @@ stages:
 
                 Write-Information "Committing changes"
                 $commitOutput = git -C "$temporaryFolderPath" commit --message "Initial commit"
-                if ($LASTEXITCODE -ne 0) { 
+                if ($LASTEXITCODE -ne 0) {
                   if ($commitOutput.Contains("nothing to commit, working tree clean")) {
                     Write-Information "No changes exist to be published."
                     return
                   }
-                  throw "Committing Git changes failed." 
+                  throw "Committing Git changes failed."
                 }
 
                 Write-Information "Pushing changes"
