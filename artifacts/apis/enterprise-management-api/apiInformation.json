@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "path": "",
+    "apiRevision": "1",
+    "apiRevisionDescription": "",
+    "apiVersionDescription": "",
+    "authenticationSettings": {},
+    "isCurrent": true,
+    "displayName": "Enterprise Management API",
+    "protocols": [
+      "https"
+    ],
+    "serviceUrl": "https://api.contoso.com/v1",
+    "subscriptionKeyParameterNames": {
+      "header": "Ocp-Apim-Subscription-Key",
+      "query": "subscription-key"
+    },
+    "subscriptionRequired": true
+  }
+}

@@ -1,0 +1,156 @@
+openapi: 3.0.1
+info:
+  title: Enterprise Management API
+  version: '1.0'
+servers:
+  - url: https://apimops.azure-api.net
+paths:
+  /notifications:
+    post:
+      summary: Send notification
+      description: Send notification
+      operationId: post-notifications
+      responses:
+        '202':
+          description: Accepted
+  /orders:
+    get:
+      summary: List orders
+      description: List orders
+      operationId: get-orders
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Create order
+      description: Create order
+      operationId: post-orders
+      responses:
+        '201':
+          description: Created
+  /audit/logs:
+    get:
+      summary: Get audit logs
+      description: Get audit logs
+      operationId: get-audit-logs
+      responses:
+        '200':
+          description: OK
+  /products:
+    post:
+      summary: Create product
+      description: Create product
+      operationId: post-products
+      responses:
+        '201':
+          description: Created
+    get:
+      summary: Get products
+      description: Get products
+      operationId: get-products
+      responses:
+        '200':
+          description: OK
+  /users:
+    post:
+      summary: Create user
+      description: Create user
+      operationId: post-users
+      responses:
+        '201':
+          description: User created
+  /reports/sales:
+    get:
+      summary: Sales report
+      description: Sales report
+      operationId: get-reports-sales
+      responses:
+        '200':
+          description: OK
+  /inventory:
+    patch:
+      summary: Update inventory
+      description: Update inventory
+      operationId: patch-inventory
+      responses:
+        '200':
+          description: Updated
+    get:
+      summary: Get inventory
+      description: Get inventory
+      operationId: get-inventory
+      responses:
+        '200':
+          description: OK
+  /health:
+    get:
+      summary: Health check
+      description: Health check
+      operationId: get-health
+      responses:
+        '200':
+          description: Service healthy
+  /auth/token:
+    post:
+      summary: Generate token
+      description: Generate token
+      operationId: post-auth-token
+      responses:
+        '200':
+          description: Token generated
+  /payments:
+    post:
+      summary: Process payment
+      description: Process payment
+      operationId: post-payments
+      responses:
+        '200':
+          description: Payment processed
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        totalAmount:
+          type: number
+        userId:
+          type: string
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]

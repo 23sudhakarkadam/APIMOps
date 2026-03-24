@@ -1,0 +1,54 @@
+openapi: 3.0.1
+info:
+  title: Sample Utility API
+  description: Sample API set with 5 endpoints for Azure API Management import
+  version: '1.0'
+servers:
+  - url: https://apimops.azure-api.net/utilityapi
+paths:
+  /health:
+    get:
+      summary: Health check
+      description: Health check
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy
+  /users:
+    get:
+      summary: Get all users
+      description: Get all users
+      operationId: getUsers
+      responses:
+        '200':
+          description: List of users
+    post:
+      summary: Create user
+      description: Create user
+      operationId: createUser
+      responses:
+        '201':
+          description: User created
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]

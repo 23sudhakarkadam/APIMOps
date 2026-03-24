@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "protocol": "http",
+    "tls": {
+      "validateCertificateChain": true,
+      "validateCertificateName": true
+    },
+    "url": "https://10.10.10.10"
+  }
+}
