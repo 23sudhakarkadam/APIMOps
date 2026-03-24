@@ -15,7 +15,7 @@ parameters:
   - name: COMMIT_ID
     type: string
     displayName: Choose "publish-all-artifacts-in-repo" only when you want to force republishing all artifacts (e.g. after build failure). Otherwise stick with the default behavior of "publish-artifacts-in-last-commit"
-    default: publish-all-artifacts-in-repo
+    default: publish-artifacts-in-last-commit
     values:
       - publish-artifacts-in-last-commit
       - publish-all-artifacts-in-repo
@@ -63,6 +63,7 @@ stages:
                      API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH: ${{ parameters.API_MANAGEMENT_SERVICE_OUTPUT_FOLDER_PATH }}
                      RESOURCE_GROUP_NAME : $(RESOURCE_GROUP_NAME_Prod)
                      API_MANAGEMENT_SERVICE_NAME : $(APIM_NAME_Prod)
+                     CONFIGURATION_YAML_PATH:  $(Build.SourcesDirectory)/configuration.prod.yaml
                      ENVIRONMENT: "Prod"
                      COMMIT_ID: ${{ parameters.COMMIT_ID }}
               

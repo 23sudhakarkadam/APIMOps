@@ -13,14 +13,12 @@ output "resource_group_name" {
   value       = azurerm_resource_group.this.name
 }
 
-# Used by apim_groups (now commented out — managed by ApiOps)
-# output "admin_user_id" {
-#   description = "APIM user_id of the admin user (used by group_user resources)"
-#   value       = azurerm_api_management_user.admin.user_id
-# }
+output "admin_user_id" {
+  description = "APIM user_id of the admin user (used by group_user resources)"
+  value       = azurerm_api_management_user.admin.user_id
+}
 
-# Used by apim_subscriptions (now commented out — managed by ApiOps)
-# output "admin_user_arm_id" {
-#   description = "ARM resource ID of the admin user (used by subscription resources)"
-#   value       = azurerm_api_management_user.admin.id
-# }
+output "admin_user_arm_id" {
+  description = "ARM resource ID of the admin user (used by subscription resources)"
+  value       = azurerm_api_management_user.admin.id
+}

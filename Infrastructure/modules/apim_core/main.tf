@@ -13,38 +13,28 @@ resource "azurerm_api_management" "this" {
 }
 
 # Managed by ApiOps (artifacts/policy.xml)
-# resource "azurerm_api_management_policy" "global" {
-#   api_management_id = azurerm_api_management.this.id
-#   xml_content       = <<-XML
-#     <!--
-#         IMPORTANT:
-#         - Policy elements can appear only within the <inbound>, <outbound>, <backend> section elements.
-#         - Only the <forward-request> policy element can appear within the <backend> section element.
-#         - To apply a policy to the incoming request (before it is forwarded to the backend service), place a corresponding policy element within the <inbound> section element.
-#         - To apply a policy to the outgoing response (before it is sent back to the caller), place a corresponding policy element within the <outbound> section element.
-#         - To add a policy position the cursor at the desired insertion point and click on the round button associated with the policy.
-#         - To remove a policy, delete the corresponding policy statement from the policy document.
-#         - Policies are applied in the order of their appearance, from the top down.
-#     -->
-#     <policies>
-#       <inbound />
-#       <backend>
-#         <forward-request />
-#       </backend>
-#       <outbound />
-#     </policies>
-#   XML
-# }
-
-# Managed by ApiOps (artifacts/named values/)
-# resource "azurerm_api_management_named_value" "named" {
-#   api_management_name = azurerm_api_management.this.name
-#   display_name        = "Named"
-#   name                = "Named"
-#   resource_group_name = azurerm_resource_group.this.name
-#   tags                = ["Env", "PROD"]
-#   value               = var.named_value
-# }
+resource "azurerm_api_management_policy" "global" {
+  api_management_id = azurerm_api_management.this.id
+  xml_content       = <<-XML
+    <!--
+        IMPORTANT:
+        - Policy elements can appear only within the <inbound>, <outbound>, <backend> section elements.
+        - Only the <forward-request> policy element can appear within the <backend> section element.
+        - To apply a policy to the incoming request (before it is forwarded to the backend service), place a corresponding policy element within the <inbound> section element.
+        - To apply a policy to the outgoing response (before it is sent back to the caller), place a corresponding policy element within the <outbound> section element.
+        - To add a policy position the cursor at the desired insertion point and click on the round button associated with the policy.
+        - To remove a policy, delete the corresponding policy statement from the policy document.
+        - Policies are applied in the order of their appearance, from the top down.
+    -->
+    <policies>
+      <inbound />
+      <backend>
+        <forward-request />
+      </backend>
+      <outbound />
+    </policies>
+  XML
+}
 
 resource "azurerm_api_management_user" "admin" {
   api_management_name = azurerm_api_management.this.name
