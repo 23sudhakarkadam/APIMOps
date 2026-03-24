@@ -19,7 +19,7 @@ variable "apim_name" {
 variable "publisher_email" {
   description = "Publisher email address for the APIM service"
   type        = string
-  default     = "sudhakar.kadam@nusummit.com"
+  default     = "23sudhakarkadam@gmail.com"
 }
 
 variable "publisher_name" {
@@ -37,7 +37,7 @@ variable "sku_name" {
 variable "admin_email" {
   description = "Email address of the built-in administrator user"
   type        = string
-  default     = "sudhakar.kadam@nusummit.com"
+  default     = "23sudhakarkadam@gmail.com"
 }
 
 
