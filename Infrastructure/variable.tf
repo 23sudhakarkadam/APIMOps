@@ -40,14 +40,14 @@ variable "admin_email" {
   default     = "sudhakar.kadam@nusummit.com"
 }
 
-#Managed by ApiOps (artifacts/backends/) — no longer used by Terraform
+
 variable "backend_url" {
   description = "URL of the my-app-backend service"
   type        = string
   default     = "https://10.10.10.10"
 }
 
-#Managed by ApiOps (artifacts/named values/) — no longer used by Terraform
+
 variable "named_value" {
   description = "Value for the 'Named' named value"
   type        = string
